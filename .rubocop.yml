@@ -1,0 +1,40 @@
+plugins:
+  - rubocop-rails
+
+AllCops:
+  CacheRootDirectory: tmp/rubocop_cache
+  NewCops: enable
+  SuggestExtensions: false
+  TargetRubyVersion: 3.2
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/Documentation:
+  Enabled: false
+
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - "rails_enum_bridge.gemspec"
+    - "spec/**/*"
+
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - "spec/**/*"
+
+Metrics/MethodLength:
+  Max: 12
+
+Metrics/AbcSize:
+  Max: 20
+
+Rails/Output:
+  Exclude:
+    - "lib/rails_enum_bridge/tasks.rb"
+
+Rails/Exit:
+  Exclude:
+    - "lib/rails_enum_bridge/tasks.rb"

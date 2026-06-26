@@ -1,0 +1,22 @@
+# Bundler
+/.bundle/
+/vendor/bundle/
+
+# Ruby gem build output
+/pkg/
+*.gem
+
+# Test, coverage, and temporary output
+/coverage/
+/tmp/
+/log/
+
+# Local environment and editor files
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
