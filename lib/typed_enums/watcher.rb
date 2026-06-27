@@ -103,7 +103,7 @@ module TypedEnums
       changed_files = modified + added + removed
       return if changed_files.empty?
 
-      logger&.info("typed_enums: model file changed, regenerating TypeScript enums")
+      logger&.info("typed_enums: model file changed, regenerating enum files")
       reload_application
       generate
     rescue StandardError => e

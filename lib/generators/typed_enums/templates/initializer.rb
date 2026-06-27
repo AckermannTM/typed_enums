@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 TypedEnums.configure do |config|
-  # Generated TypeScript files are written here.
+  # Generated JavaScript and TypeScript declaration files are written here.
   config.output_dir = "app/frontend/generated/rails"
 
   # Automatically regenerate enum files in development.

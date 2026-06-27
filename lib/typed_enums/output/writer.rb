@@ -4,9 +4,9 @@ require "fileutils"
 require "pathname"
 
 module TypedEnums
-  module TypeScript
+  module Output
     class Writer
-      GENERATED_MARKER = ModelFile::HEADER
+      GENERATED_MARKER = JavaScriptFile::HEADER
 
       Result = Data.define(:changed, :missing, :extra, :unchanged) do
         def stale?
@@ -92,9 +92,17 @@ module TypedEnums
       def generated_files
         return [] unless output_dir.exist?
 
-        output_dir.glob("**/*.ts").select do |path|
-          path.file? && path.read.start_with?(GENERATED_MARKER)
-        end
+        output_dir.glob("**/*").select do |path|
+          generated_file?(path)
+        end.sort
+      end
+
+      def generated_file?(path)
+        path.file? && generated_extension?(path) && path.read.start_with?(GENERATED_MARKER)
+      end
+
+      def generated_extension?(path)
+        [".js", ".ts"].include?(path.extname) || path.to_s.end_with?(".d.ts")
       end
 
       def default_logger

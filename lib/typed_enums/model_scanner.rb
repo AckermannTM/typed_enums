@@ -4,7 +4,7 @@ require "active_support/core_ext/string/inflections"
 
 module TypedEnums
   class ModelScanner
-    def initialize(config: TypedEnums.configuration, name_builder: TypeScript::NameBuilder.new)
+    def initialize(config: TypedEnums.configuration, name_builder: Naming::NameBuilder.new)
       @config = config
       @name_builder = name_builder
     end

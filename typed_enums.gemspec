@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["typed_enums contributors"]
   spec.email = ["maintainers@example.com"]
 
-  spec.summary = "Export Rails Active Record enums to TypeScript constants and union types."
-  spec.description = "typed_enums generates framework-agnostic TypeScript modules from Rails model enums."
+  spec.summary = "Export Rails Active Record enums to JavaScript constants and TypeScript declaration types."
+  spec.description = "typed_enums generates a framework-agnostic JavaScript enum module from Rails model enums."
   spec.homepage = "https://github.com/example/typed_enums"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.2"

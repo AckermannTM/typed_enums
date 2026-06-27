@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TypedEnums::TypeScript::NameBuilder do
+RSpec.describe TypedEnums::Naming::NameBuilder do
   subject(:builder) { described_class.new }
 
   it "converts Rails plural mapping names to camelCase properties" do
@@ -30,6 +30,5 @@ RSpec.describe TypedEnums::TypeScript::NameBuilder do
 
   it "flattens namespaced model names into safe exports" do
     expect(builder.model_export_name("Admin::Task")).to eq("AdminTask")
-    expect(builder.file_name("AdminTask")).to eq("AdminTask.ts")
   end
 end

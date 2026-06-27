@@ -3,7 +3,7 @@
 require "rake"
 
 namespace :typed_enums do
-  desc "Generate TypeScript enum modules from Active Record enums"
+  desc "Generate JavaScript enum module and TypeScript declarations from Active Record enums"
   task generate: :environment do
     result = TypedEnums.generate
     if result.stale?
@@ -14,7 +14,7 @@ namespace :typed_enums do
     end
   end
 
-  desc "Check whether generated TypeScript enum modules are current"
+  desc "Check whether generated enum files are current"
   task check: :environment do
     result = TypedEnums.check
 
@@ -27,7 +27,7 @@ namespace :typed_enums do
     puts "typed_enums: generated files are current"
   end
 
-  desc "Watch Rails model files and regenerate TypeScript enum modules after saves"
+  desc "Watch Rails model files and regenerate enum files after saves"
   task watch: :environment do
     puts "typed_enums: watching app/models for enum changes"
     TypedEnums::Watcher.run_foreground(logger: Rails.logger)

@@ -20,16 +20,16 @@ RSpec.describe "typed_enums rake tasks" do
   end
 
   it "runs generate" do
-    result = TypedEnums::TypeScript::Writer::Result.new(changed: [], missing: [], extra: [],
-                                                        unchanged: ["index.ts"])
+    result = TypedEnums::Output::Writer::Result.new(changed: [], missing: [], extra: [],
+                                                    unchanged: ["index.js", "index.d.ts"])
     allow(TypedEnums).to receive(:generate).and_return(result)
 
     expect { Rake::Task["typed_enums:generate"].invoke }.to output(/generated files are current/).to_stdout
   end
 
   it "fails check when files are stale" do
-    result = TypedEnums::TypeScript::Writer::Result.new(changed: ["Task.ts"], missing: [], extra: [],
-                                                        unchanged: [])
+    result = TypedEnums::Output::Writer::Result.new(changed: ["index.js"], missing: [], extra: [],
+                                                    unchanged: [])
     allow(TypedEnums).to receive(:check).and_return(result)
 
     expect { Rake::Task["typed_enums:check"].invoke }.to raise_error(SystemExit)

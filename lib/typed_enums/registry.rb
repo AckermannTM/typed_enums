@@ -2,29 +2,28 @@
 
 module TypedEnums
   class Registry
-    def initialize(scanner: ModelScanner.new, name_builder: TypeScript::NameBuilder.new)
+    def initialize(scanner: ModelScanner.new)
       @scanner = scanner
-      @name_builder = name_builder
     end
 
     def expected_files
-      model_groups.transform_keys { |model_export_name| name_builder.file_name(model_export_name) }
-                  .transform_values do |definitions|
-        TypeScript::ModelFile.new(model_export_name: definitions.first.model_export_name, definitions:).render
-      end
-                  .merge("index.ts" => index_file)
+      javascript_file = Output::JavaScriptFile.new(model_groups:)
+
+      {
+        "index.js" => javascript_file.render,
+        "index.d.ts" => Output::TypeDeclarationFile.new(
+          model_groups:,
+          schema_hash: javascript_file.schema_hash
+        ).render
+      }
     end
 
     private
 
-    attr_reader :scanner, :name_builder
+    attr_reader :scanner
 
     def model_groups
       @model_groups ||= scanner.call.group_by(&:model_export_name).sort.to_h
-    end
-
-    def index_file
-      TypeScript::IndexFile.new(model_export_names: model_groups.keys).render
     end
   end
 end

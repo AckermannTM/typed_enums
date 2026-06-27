@@ -3,7 +3,7 @@
 require "active_support/core_ext/string/inflections"
 
 module TypedEnums
-  module TypeScript
+  module Naming
     class NameBuilder
       def model_export_name(model_name)
         model_name.to_s.split("::").map(&:camelize).join
@@ -19,10 +19,6 @@ module TypedEnums
 
       def type_name(model_export_name:, rails_mapping_name:)
         "#{model_export_name}#{rails_mapping_name.to_s.singularize.camelize}"
-      end
-
-      def file_name(model_export_name)
-        "#{model_export_name}.ts"
       end
     end
   end
