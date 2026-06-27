@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rails_enum_bridge (0.1.0)
+    typed_rails_enum_keys (0.1.0)
       listen (>= 3.5, < 4.0)
       rails (>= 7.1, < 9.0)
 
@@ -287,11 +287,11 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  rails_enum_bridge!
   rake (>= 13.0)
   rspec (>= 3.13)
   rubocop (>= 1.60)
   rubocop-rails (>= 2.25)
+  typed_rails_enum_keys!
 
 BUNDLED WITH
    2.7.2
