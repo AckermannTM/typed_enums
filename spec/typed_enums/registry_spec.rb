@@ -15,8 +15,8 @@ RSpec.describe TypedEnums::Registry do
 
     files = described_class.new(scanner:).expected_files
 
-    expect(files.keys).to eq(["index.js", "index.d.ts"])
-    expect(files["index.js"]).to include("export const Task = {")
-    expect(files["index.d.ts"]).to include("export type TaskWorkPriority")
+    expect(files.keys).to eq(["enums.js", "enums.d.ts"])
+    expect(files["enums.js"]).to include("export const Task = {")
+    expect(files["enums.d.ts"]).to include("export type TaskWorkPriority")
   end
 end

@@ -5,7 +5,7 @@ module TypedEnums
     attr_accessor :output_dir, :root_model_class, :auto_generate_in_development, :watch_models_in_development
 
     def initialize
-      @output_dir = "app/frontend/generated/rails"
+      @output_dir = "app/javascript/lib"
       @root_model_class = "ApplicationRecord"
       @auto_generate_in_development = true
       @watch_models_in_development = true

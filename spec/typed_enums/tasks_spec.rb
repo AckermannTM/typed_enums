@@ -21,19 +21,37 @@ RSpec.describe "typed_enums rake tasks" do
 
   it "runs generate" do
     result = TypedEnums::Output::Writer::Result.new(changed: [], missing: [], extra: [],
-                                                    unchanged: ["index.js", "index.d.ts"])
+                                                    unchanged: ["enums.js", "enums.d.ts"], conflicts: [])
     allow(TypedEnums).to receive(:generate).and_return(result)
 
     expect { Rake::Task["typed_enums:generate"].invoke }.to output(/generated files are current/).to_stdout
   end
 
   it "fails check when files are stale" do
-    result = TypedEnums::Output::Writer::Result.new(changed: ["index.js"], missing: [], extra: [],
-                                                    unchanged: [])
+    result = TypedEnums::Output::Writer::Result.new(changed: ["enums.js"], missing: [], extra: [],
+                                                    unchanged: [], conflicts: [])
     allow(TypedEnums).to receive(:check).and_return(result)
 
     expect { Rake::Task["typed_enums:check"].invoke }.to raise_error(SystemExit)
       .and output(/generated files are stale/).to_stderr
+  end
+
+  it "fails generate when output files conflict with user-owned files" do
+    result = TypedEnums::Output::Writer::Result.new(changed: [], missing: [], extra: [], unchanged: [],
+                                                    conflicts: ["enums.js"])
+    allow(TypedEnums).to receive(:generate).and_return(result)
+
+    expect { Rake::Task["typed_enums:generate"].invoke }.to raise_error(SystemExit)
+      .and output(/refusing to overwrite existing non-generated files/).to_stderr
+  end
+
+  it "fails check when output files conflict with user-owned files" do
+    result = TypedEnums::Output::Writer::Result.new(changed: [], missing: [], extra: [], unchanged: [],
+                                                    conflicts: ["enums.d.ts"])
+    allow(TypedEnums).to receive(:check).and_return(result)
+
+    expect { Rake::Task["typed_enums:check"].invoke }.to raise_error(SystemExit)
+      .and output(/existing non-generated files block enum generation/).to_stderr
   end
 
   it "runs watch in the foreground" do

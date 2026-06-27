@@ -11,7 +11,7 @@ module TypedEnums
     end
 
     def create_generated_directory
-      create_file "app/frontend/generated/rails/.keep", ""
+      create_file "app/javascript/lib/.keep", ""
     end
   end
 end

@@ -8,17 +8,24 @@ module TypedEnums
     class Writer
       GENERATED_MARKER = JavaScriptFile::HEADER
 
-      Result = Data.define(:changed, :missing, :extra, :unchanged) do
+      Result = Data.define(:changed, :missing, :extra, :unchanged, :conflicts) do
         def stale?
-          changed.any? || missing.any? || extra.any?
+          changed.any? || missing.any? || extra.any? || conflicts.any?
+        end
+
+        def conflict?
+          conflicts.any?
         end
 
         def summary
-          sections = []
-          sections << "missing: #{missing.join(', ')}" if missing.any?
-          sections << "changed: #{changed.join(', ')}" if changed.any?
-          sections << "extra: #{extra.join(', ')}" if extra.any?
-          sections.join("\n")
+          {
+            "conflicts" => conflicts,
+            "missing" => missing,
+            "changed" => changed,
+            "extra" => extra
+          }.filter_map do |label, files|
+            "#{label}: #{files.join(', ')}" if files.any?
+          end.join("\n")
         end
       end
 
@@ -32,7 +39,7 @@ module TypedEnums
       def call
         ensure_output_dir unless check
 
-        result = Result.new(changed: [], missing: [], extra: [], unchanged: [])
+        result = Result.new(changed: [], missing: [], extra: [], unchanged: [], conflicts: [])
         reconcile_expected_files(result)
         reconcile_stale_files(result)
         result
@@ -45,17 +52,30 @@ module TypedEnums
       def reconcile_expected_files(result)
         expected_files.sort.each do |relative_path, content|
           path = output_dir.join(relative_path)
-
-          if !path.exist?
-            result.missing << relative_path
-            write_file(path, content) unless check
-          elsif path.read == content
-            result.unchanged << relative_path
-          else
-            result.changed << relative_path
-            write_file(path, content) unless check
-          end
+          reconcile_expected_file(result:, relative_path:, path:, content:)
         end
+      end
+
+      def reconcile_expected_file(result:, relative_path:, path:, content:)
+        if !path.exist?
+          mark_missing(result:, relative_path:, path:, content:)
+        elsif path.read == content
+          result.unchanged << relative_path
+        elsif !generated_file?(path)
+          result.conflicts << relative_path
+        else
+          mark_changed(result:, relative_path:, path:, content:)
+        end
+      end
+
+      def mark_missing(result:, relative_path:, path:, content:)
+        result.missing << relative_path
+        write_file(path, content) unless check
+      end
+
+      def mark_changed(result:, relative_path:, path:, content:)
+        result.changed << relative_path
+        write_file(path, content) unless check
       end
 
       def reconcile_stale_files(result)

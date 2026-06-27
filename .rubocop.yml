@@ -19,6 +19,7 @@ Gemspec/DevelopmentDependencies:
 Metrics/BlockLength:
   Exclude:
     - "typed_enums.gemspec"
+    - "lib/typed_enums/tasks.rb"
     - "spec/**/*"
 
 Lint/ConstantDefinitionInBlock:

@@ -10,8 +10,8 @@ module TypedEnums
       javascript_file = Output::JavaScriptFile.new(model_groups:)
 
       {
-        "index.js" => javascript_file.render,
-        "index.d.ts" => Output::TypeDeclarationFile.new(
+        "enums.js" => javascript_file.render,
+        "enums.d.ts" => Output::TypeDeclarationFile.new(
           model_groups:,
           schema_hash: javascript_file.schema_hash
         ).render

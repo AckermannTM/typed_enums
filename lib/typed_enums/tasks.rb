@@ -6,6 +6,12 @@ namespace :typed_enums do
   desc "Generate JavaScript enum module and TypeScript declarations from Active Record enums"
   task generate: :environment do
     result = TypedEnums.generate
+    if result.conflict?
+      warn "typed_enums: refusing to overwrite existing non-generated files"
+      warn result.summary
+      abort "Move the files, delete them, or change config.output_dir."
+    end
+
     if result.stale?
       puts "typed_enums: generated files updated"
       puts result.summary
@@ -17,6 +23,12 @@ namespace :typed_enums do
   desc "Check whether generated enum files are current"
   task check: :environment do
     result = TypedEnums.check
+
+    if result.conflict?
+      warn "typed_enums: existing non-generated files block enum generation"
+      warn result.summary
+      abort "Move the files, delete them, or change config.output_dir."
+    end
 
     if result.stale?
       warn "typed_enums: generated files are stale"
