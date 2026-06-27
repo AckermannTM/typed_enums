@@ -5,7 +5,7 @@ require "logger"
 require "active_support/core_ext/module/delegation"
 require "rails/railtie"
 
-require "typed_rails_enum_keys"
+require "typed_enums"
 
 RSpec.configure do |config|
   config.disable_monkey_patching!
@@ -14,6 +14,6 @@ RSpec.configure do |config|
   end
 
   config.before do
-    TypedRailsEnumKeys.reset_configuration!
+    TypedEnums.reset_configuration!
   end
 end

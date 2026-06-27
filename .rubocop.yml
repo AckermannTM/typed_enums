@@ -18,7 +18,7 @@ Gemspec/DevelopmentDependencies:
 
 Metrics/BlockLength:
   Exclude:
-    - "typed_rails_enum_keys.gemspec"
+    - "typed_enums.gemspec"
     - "spec/**/*"
 
 Lint/ConstantDefinitionInBlock:
@@ -33,8 +33,8 @@ Metrics/AbcSize:
 
 Rails/Output:
   Exclude:
-    - "lib/typed_rails_enum_keys/tasks.rb"
+    - "lib/typed_enums/tasks.rb"
 
 Rails/Exit:
   Exclude:
-    - "lib/typed_rails_enum_keys/tasks.rb"
+    - "lib/typed_enums/tasks.rb"
