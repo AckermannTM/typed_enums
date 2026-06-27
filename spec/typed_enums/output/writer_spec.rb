@@ -102,4 +102,17 @@ RSpec.describe TypedEnums::Output::Writer do
       expect(dir.join("enums.d.ts")).not_to exist
     end
   end
+
+  it "summarizes applied generate actions separately from stale check state" do
+    result = described_class::Result.new(
+      changed: ["enums.js"],
+      missing: ["enums.d.ts"],
+      extra: ["Task.ts"],
+      unchanged: [],
+      conflicts: []
+    )
+
+    expect(result.summary).to eq("missing: enums.d.ts\nchanged: enums.js\nextra: Task.ts")
+    expect(result.applied_summary).to eq("created: enums.d.ts\nupdated: enums.js\nremoved: Task.ts")
+  end
 end

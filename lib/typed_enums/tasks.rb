@@ -14,7 +14,7 @@ namespace :typed_enums do
 
     if result.stale?
       puts "typed_enums: generated files updated"
-      puts result.summary
+      puts result.applied_summary
     else
       puts "typed_enums: generated files are current"
     end

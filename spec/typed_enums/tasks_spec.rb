@@ -27,6 +27,16 @@ RSpec.describe "typed_enums rake tasks" do
     expect { Rake::Task["typed_enums:generate"].invoke }.to output(/generated files are current/).to_stdout
   end
 
+  it "reports generated files created on first generate" do
+    result = TypedEnums::Output::Writer::Result.new(changed: [], missing: ["enums.d.ts", "enums.js"], extra: [],
+                                                    unchanged: [], conflicts: [])
+    allow(TypedEnums).to receive(:generate).and_return(result)
+
+    expect { Rake::Task["typed_enums:generate"].invoke }.to output(
+      /generated files updated\ncreated: enums.d.ts, enums.js/
+    ).to_stdout
+  end
+
   it "fails check when files are stale" do
     result = TypedEnums::Output::Writer::Result.new(changed: ["enums.js"], missing: [], extra: [],
                                                     unchanged: [], conflicts: [])

@@ -10,6 +10,7 @@ require "typed_enums/model_scanner"
 require "typed_enums/output/javascript_file"
 require "typed_enums/output/type_declaration_file"
 require "typed_enums/registry"
+require "typed_enums/output/writer/result"
 require "typed_enums/output/writer"
 require "typed_enums/watcher"
 
