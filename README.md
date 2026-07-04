@@ -6,6 +6,8 @@ Use Rails enums in JavaScript and TypeScript without duplicating option lists.
 
 Rails routes have `js-routes`. Rails serializers have serializer type generators. Rails enums now have `typed_enums`.
 
+RubyGems: [https://rubygems.org/gems/typed_enums](https://rubygems.org/gems/typed_enums)
+
 ## What It Does
 
 `typed_enums` scans loaded Active Record models, reads `defined_enums`, and writes one generated JavaScript module plus a TypeScript declaration file:
@@ -114,20 +116,104 @@ function setPriority(priority: TaskWorkPriority) {
 ## React
 
 ```tsx
+import { useId, useState, type FormEvent } from "react";
 import { Task, type TaskWorkPriority } from "@/lib/enums";
 
-export function PrioritySelect(props: {
-  value: TaskWorkPriority;
-  onChange: (value: TaskWorkPriority) => void;
+type TaskRecord = {
+  id: number;
+  workPriority: TaskWorkPriority;
+};
+
+type UpdateTaskPriorityParams = {
+  work_priority: TaskWorkPriority;
+};
+
+export function EditTaskPriority(props: {
+  task: TaskRecord;
+  onSubmit: (taskId: number, params: UpdateTaskPriorityParams) => void | Promise<void>;
 }) {
+  const priorityFieldId = useId();
+  const [workPriority, setWorkPriority] = useState<TaskWorkPriority>(props.task.workPriority);
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    void props.onSubmit(props.task.id, { work_priority: workPriority });
+  }
+
   return (
-    <select value={props.value} onChange={(event) => props.onChange(event.target.value as TaskWorkPriority)}>
-      {Task.workPriorities.map((value) => (
-        <option key={value} value={value}>
-          {value}
-        </option>
-      ))}
-    </select>
+    <form onSubmit={handleSubmit}>
+      <label htmlFor={priorityFieldId}>Work priority</label>
+
+      <select
+        id={priorityFieldId}
+        name="work_priority"
+        value={workPriority}
+        onChange={(event) => setWorkPriority(event.currentTarget.value as TaskWorkPriority)}
+      >
+        {Task.workPriorities.map((value) => (
+          <option key={value} value={value}>
+            {value}
+          </option>
+        ))}
+      </select>
+
+      <button type="submit">Save</button>
+    </form>
+  );
+}
+```
+
+## React With Inertia
+
+```tsx
+import { useId, type FormEvent } from "react";
+import { useForm } from "@inertiajs/react";
+import { Task, type TaskWorkPriority } from "@/lib/enums";
+
+type TaskRecord = {
+  id: number;
+  workPriority: TaskWorkPriority;
+};
+
+type UpdateTaskPriorityParams = {
+  work_priority: TaskWorkPriority;
+};
+
+export function EditTaskPriority(props: {
+  task: TaskRecord;
+}) {
+  const priorityFieldId = useId();
+  const form = useForm<UpdateTaskPriorityParams>({
+    work_priority: props.task.workPriority,
+  });
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    form.put(`/tasks/${props.task.id}`);
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label htmlFor={priorityFieldId}>Work priority</label>
+
+      <select
+        id={priorityFieldId}
+        name="work_priority"
+        value={form.data.work_priority}
+        onChange={(event) => form.setData("work_priority", event.currentTarget.value as TaskWorkPriority)}
+        disabled={form.processing}
+      >
+        {Task.workPriorities.map((value) => (
+          <option key={value} value={value}>
+            {value}
+          </option>
+        ))}
+      </select>
+
+      <button type="submit" disabled={form.processing}>
+        Save
+      </button>
+    </form>
   );
 }
 ```
@@ -136,19 +222,80 @@ export function PrioritySelect(props: {
 
 ```vue
 <script setup lang="ts">
+import { ref, useId } from "vue";
 import { Task, type TaskWorkPriority } from "@/lib/enums";
 
-const model = defineModel<TaskWorkPriority>();
+const props = defineProps<{
+  task: {
+    id: number;
+    workPriority: TaskWorkPriority;
+  };
+}>();
+
+const emit = defineEmits<{
+  submit: [taskId: number, params: { work_priority: TaskWorkPriority }];
+}>();
+
+const priorityFieldId = useId();
+const workPriority = ref<TaskWorkPriority>(props.task.workPriority);
 </script>
 
 <template>
-  <select v-model="model">
-    <option v-for="value in Task.workPriorities" :key="value" :value="value">
-      {{ value }}
-    </option>
-  </select>
+  <form @submit.prevent="emit('submit', props.task.id, { work_priority: workPriority })">
+    <label :for="priorityFieldId">Work priority</label>
+
+    <select :id="priorityFieldId" v-model="workPriority" name="work_priority">
+      <option v-for="value in Task.workPriorities" :key="value" :value="value">
+        {{ value }}
+      </option>
+    </select>
+
+    <button type="submit">Save</button>
+  </form>
 </template>
 ```
+
+## Vue With Inertia
+
+```vue
+<script setup lang="ts">
+import { useId } from "vue";
+import { useForm } from "@inertiajs/vue3";
+import { Task, type TaskWorkPriority } from "@/lib/enums";
+
+const props = defineProps<{
+  task: {
+    id: number;
+    workPriority: TaskWorkPriority;
+  };
+}>();
+
+const priorityFieldId = useId();
+const form = useForm<{
+  work_priority: TaskWorkPriority;
+}>({
+  work_priority: props.task.workPriority,
+});
+</script>
+
+<template>
+  <form @submit.prevent="form.put(`/tasks/${props.task.id}`)">
+    <label :for="priorityFieldId">Work priority</label>
+
+    <select :id="priorityFieldId" v-model="form.work_priority" name="work_priority" :disabled="form.processing">
+      <option v-for="value in Task.workPriorities" :key="value" :value="value">
+        {{ value }}
+      </option>
+    </select>
+
+    <button type="submit" :disabled="form.processing">
+      Save
+    </button>
+  </form>
+</template>
+```
+
+The route strings are intentionally plain for the examples. In Rails apps that use `js-routes`, prefer generated route helpers instead of building URLs by hand.
 
 ## Svelte Or Plain TypeScript
 
