@@ -1,5 +1,7 @@
 # typed_enums
 
+[![Gem Version](https://badge.fury.io/rb/typed_enums.svg?icon=si%3Arubygems)](https://badge.fury.io/rb/typed_enums)
+
 Use Rails enums in JavaScript and TypeScript without duplicating option lists.
 
 `typed_enums` is a Rails enum generator for JavaScript and TypeScript frontends. It exports Active Record enums to JavaScript constants and TypeScript declaration types, giving any frontend a Rails-like way to consume enum values.
