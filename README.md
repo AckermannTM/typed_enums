@@ -6,8 +6,6 @@ Use Rails enums in JavaScript and TypeScript without duplicating option lists.
 
 Rails routes have `js-routes`. Rails serializers have serializer type generators. Rails enums now have `typed_enums`.
 
-RubyGems: [https://rubygems.org/gems/typed_enums](https://rubygems.org/gems/typed_enums)
-
 ## What It Does
 
 `typed_enums` scans loaded Active Record models, reads `defined_enums`, and writes one generated JavaScript module plus a TypeScript declaration file:
@@ -355,12 +353,18 @@ The installer creates `config/initializers/typed_enums.rb`:
 # frozen_string_literal: true
 
 TypedEnums.configure do |config|
+  # Generated JavaScript and TypeScript declaration files are written here.
   config.output_dir = "app/javascript/lib"
-  config.root_model_class = "ApplicationRecord"
+
+  # Automatically regenerate enum files in development.
   config.auto_generate_in_development = true
+
+  # Watch app/models in development and regenerate after saves.
   config.watch_models_in_development = true
 end
 ```
+
+If your enum models do not inherit from `ApplicationRecord`, configure `config.root_model_class` to the shared base class that exposes your Active Record descendants.
 
 Keep the output directory isolated and import generated code from that directory. The generator never appends to user-owned frontend files.
 
@@ -457,7 +461,7 @@ Enum values are written to frontend-visible JavaScript files. Do not put secrets
 
 ## Compatibility
 
-The gem targets modern Rails applications and supports Rails 7.1 or newer. It uses Active Record enum APIs and ActiveSupport inflections, and it does not depend on any frontend framework.
+The gem targets modern Rails applications and supports Rails 7.1 or newer. It uses Active Record enum APIs and ActiveSupport inflections, and it does not depend on any frontend framework. The React, Vue, and Inertia examples target current framework versions and are provided as copyable usage examples for generated enum values.
 
 ## Contributing
 
